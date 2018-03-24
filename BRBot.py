@@ -21,11 +21,17 @@ duolastUsed = datetime(2018,1,1,00,00,00)
 squadlastUsed = datetime(2018,1,1,00,00,00)
 sock.send("CAP REQ :twitch.tv/tags\r\n")
 sock.send("CAP REQ :twitch.tv/commands\r\n")
+peeTimer = datetime.now()
+dadGreeting = True
 while Running:
     readbuffer = readbuffer + sock.recv(1024)
     temp = string.split(readbuffer, "\n")
     readbuffer = temp.pop()
     
+    peeCheck = datetime.now() - (peeTimer + timedelta(seconds = 3600))
+    if peeCheck > timedelta(seconds = 0):
+        sendMsg(sock, "@cookeeeemonster it's time for a pee break")
+        peeTimer = datetime.now()
     for line in temp:
         if "PING :tmi.twitch.tv" in line:
             sock.send("PONG :tmi.twitch.tv\r\n")
@@ -38,6 +44,9 @@ while Running:
             user = getUser(line)
             message = getMsg(line)
             user_level = getUserLevel(line)
+            if user == "golden_eagle_gaming" and dadGreeting == True:
+                sendMsg(sock, "Hi Dad")
+                dadGreeting = False
 
             if message.startswith("!addwin"):
                 if user_level == "broadcaster" or user_level == "moderator" or user == "golden_eagle_gaming":
