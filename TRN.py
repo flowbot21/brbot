@@ -54,3 +54,11 @@ def getStats(user, stat, touser, platform):
     else:
         statString = "Invalid statistic requested. Supported statistics are: solokd, solokills, solowins, duokd, duokills, duokd, squadkd, squadwins, squadkills, kd, kills, wins. Command format is !fortnite user statistic platform"
     return statString
+def getLastWin():
+    response = requests.get('https://api.fortnitetracker.com/v1/profile/pc/cookeeeemonster', headers = headers)
+    dataDict = ast.literal_eval(response.text)
+    for i in range(0, len(dataDict['recentMatches'])):
+        if dataDict['recentMatches'][i]['top1'] == 1:
+            lastKills = dataDict['recentMatches'][i]['kills']
+            break
+    return lastKills

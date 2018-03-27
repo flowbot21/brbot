@@ -9,7 +9,7 @@ from Socket import openSocket, closeSocket, sendMsg
 from Initialize import joinRoom
 from Read import getMsg, getUser, getUserLevel
 from fileio import addWin, resetWins, callWins
-from TRN import getStats
+from TRN import getStats, getLastWin
 
 Running = True
 sock = openSocket()
@@ -44,9 +44,6 @@ while Running:
             user = getUser(line)
             message = getMsg(line)
             user_level = getUserLevel(line)
-            if user == "golden_eagle_gaming" and dadGreeting == True:
-                sendMsg(sock, "Hi Dad")
-                dadGreeting = False
 
             if message.startswith("!addwin"):
                 if user_level == "broadcaster" or user_level == "moderator" or user == "golden_eagle_gaming":
@@ -99,3 +96,9 @@ while Running:
                     platform = separate[3]
                     printMessage = getStats(user, stat, touser, platform)
                     sendMsg(sock, "%s" %printMessage)
+            elif message.startswith("!lastwin") and user_level == 'broacaster' or user_level == 'moderator':
+                lastKills = getLastWin()
+                if lastKills == False:
+                    sendMsg(sock, "No wins in last 10 games")
+                else:
+                    sendMsg(sock, "Kills Last Win: %s" %lastKills)
